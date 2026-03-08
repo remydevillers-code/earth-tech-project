@@ -1,0 +1,28 @@
+{
+  "window": {
+    "width": 960,
+    "height": 540,
+    "title": "Eco-Switch : Mission Lumiere"
+  },
+  "simulation": {
+    "gravity": 9.81,
+    "time_step": 0.033,
+    "max_projectiles": 6,
+    "projectile_radius": 8,
+    "projectile_mass": 0.25,
+    "fps_limit": 30
+  },
+  "player": {
+    "x": 90,
+    "y": 420,
+    "power_min": 10,
+    "power_max": 40,
+    "angle_min": 15,
+    "angle_max": 75
+  },
+  "switches": [
+    {"x": 700, "y": 370, "radius": 25, "is_on": true, "waste_watts": 40},
+    {"x": 820, "y": 250, "radius": 25, "is_on": true, "waste_watts": 60},
+    {"x": 610, "y": 170, "radius": 25, "is_on": true, "waste_watts": 35}
+  ]
+}
