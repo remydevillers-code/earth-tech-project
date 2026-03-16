@@ -2,15 +2,16 @@ import pygame
 import sys
 import random
 import math
+from credits import show_credits
 
 pygame.init()
 
-# --- Configuration ---
+
 WIDTH, HEIGHT = 800, 600
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("La Maison Verte")
 
-# --- Couleurs ---
+
 GREEN_LIGHT = (165, 245, 112)
 GREEN_MID   = (76, 175, 80)
 GREEN_BTN   = (26, 107, 46)
@@ -20,13 +21,13 @@ GREEN_SUB   = (126, 207, 136)
 MOON_COLOR  = (245, 208, 96)
 MOON_INNER  = (255, 245, 200)
 
-# --- Polices ---
+
 font_title = pygame.font.SysFont("Georgia", 62, bold=True)
 font_big   = pygame.font.SysFont("Georgia", 36, bold=True)
 font_small = pygame.font.SysFont("Georgia", 22)
 font_sub   = pygame.font.SysFont("Georgia", 15)
 
-# --- Étoiles ---
+
 stars = [
     (random.randint(0, WIDTH),
      random.randint(0, int(HEIGHT * 0.72)),
@@ -36,7 +37,6 @@ stars = [
 ]
 
 
-# ── Fond dégradé nuit ──────────────────────────────────────────
 def draw_bg(surface):
     for y in range(HEIGHT):
         t = y / HEIGHT
@@ -46,7 +46,6 @@ def draw_bg(surface):
         pygame.draw.line(surface, (r, g, b), (0, y), (WIDTH, y))
 
 
-# ── Étoiles scintillantes ─────────────────────────────────────
 def draw_stars(surface, tick):
     for (x, y, size, offset) in stars:
         brightness = int(180 + 75 * math.sin(tick * 0.04 + offset))
@@ -54,13 +53,11 @@ def draw_stars(surface, tick):
         pygame.draw.circle(surface, (brightness, brightness, brightness), (x, y), size)
 
 
-# ── Lune ──────────────────────────────────────────────────────
 def draw_moon(surface):
     pygame.draw.circle(surface, MOON_COLOR, (680, 55), 28)
     pygame.draw.circle(surface, MOON_INNER, (672, 48), 20)
 
 
-# ── Sol / herbe ───────────────────────────────────────────────
 def draw_ground(surface):
     for y in range(HEIGHT - 58, HEIGHT):
         t = (y - (HEIGHT - 58)) / 58
@@ -70,11 +67,9 @@ def draw_ground(surface):
         pygame.draw.line(surface, (r, g, b), (0, y), (WIDTH, y))
 
 
-# ── Bouton ────────────────────────────────────────────────────
 def draw_button(surface, rect, text, font, hovered, big=False):
     color  = GREEN_HOVER if hovered else GREEN_BTN
     border = GREEN_LIGHT if hovered else GREEN_MID
-    # Ombre
     pygame.draw.rect(surface, (2, 14, 5), rect.move(4, 4), border_radius=16)
     pygame.draw.rect(surface, color, rect, border_radius=16)
     pygame.draw.rect(surface, border, rect, width=3, border_radius=16)
@@ -92,6 +87,16 @@ def main_menu():
     btn_play   = pygame.Rect(WIDTH // 2 - 170, 290, 340, 86)
     btn_char   = pygame.Rect(WIDTH // 2 - 202, 400, 188, 58)
     btn_credit = pygame.Rect(WIDTH // 2 + 14,  400, 188, 58)
+
+    # ── Noms de l'équipe (modifiez ici) ──
+    noms = [
+        "Lucas Faux",
+        "Maxime Oudin",
+        "Hugo Marot",
+        "Remy Devillers",
+        "Hugo Hendrickx",
+        "Ahmad Fadel",
+    ]
 
     current_screen = "menu"
 
@@ -148,12 +153,8 @@ def main_menu():
             screen.blit(info, (WIDTH // 2 - info.get_width() // 2, HEIGHT // 2 + 20))
 
         elif current_screen == "credits":
-            msg  = font_big.render("Crédits", True, GREEN_LIGHT)
-            info = font_small.render("Développé par votre équipe  —  2025", True, GREEN_SUB)
-            esc  = font_sub.render("Appuyez sur Échap pour revenir", True, (74, 122, 80))
-            screen.blit(msg,  (WIDTH // 2 - msg.get_width()  // 2, HEIGHT // 2 - 60))
-            screen.blit(info, (WIDTH // 2 - info.get_width() // 2, HEIGHT // 2))
-            screen.blit(esc,  (WIDTH // 2 - esc.get_width()  // 2, HEIGHT // 2 + 50))
+            show_credits(screen, WIDTH, HEIGHT, font_big, font_small, font_sub,
+                         GREEN_LIGHT, GREEN_MID, GREEN_TEXT, GREEN_SUB)
 
         pygame.display.flip()
         clock.tick(60)
