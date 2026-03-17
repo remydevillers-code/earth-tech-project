@@ -10,7 +10,8 @@
     "max_projectiles": 6,
     "projectile_radius": 8,
     "projectile_mass": 0.25,
-    "fps_limit": 30
+    "fps_limit": 30,
+    "max_shots_per_level": 10
   },
   "player": {
     "x": 90,
@@ -20,9 +21,630 @@
     "angle_min": 15,
     "angle_max": 75
   },
-  "switches": [
-    {"x": 700, "y": 370, "radius": 25, "is_on": true, "waste_watts": 40},
-    {"x": 820, "y": 250, "radius": 25, "is_on": true, "waste_watts": 60},
-    {"x": 610, "y": 170, "radius": 25, "is_on": true, "waste_watts": 35}
+  "levels": [
+    {
+      "lamps": [
+        {
+          "x": 700,
+          "y": 370,
+          "radius": 24,
+          "is_on": true,
+          "waste_watts": 40,
+          "kind": "unused"
+        },
+        {
+          "x": 770,
+          "y": 300,
+          "radius": 24,
+          "is_on": true,
+          "waste_watts": 35,
+          "kind": "unused"
+        },
+        {
+          "x": 620,
+          "y": 220,
+          "radius": 24,
+          "is_on": true,
+          "waste_watts": 0,
+          "kind": "used"
+        }
+      ]
+    },
+    {
+      "lamps": [
+        {
+          "x": 780,
+          "y": 360,
+          "radius": 24,
+          "is_on": true,
+          "waste_watts": 45,
+          "kind": "unused"
+        },
+        {
+          "x": 650,
+          "y": 250,
+          "radius": 24,
+          "is_on": true,
+          "waste_watts": 40,
+          "kind": "unused"
+        },
+        {
+          "x": 840,
+          "y": 210,
+          "radius": 24,
+          "is_on": true,
+          "waste_watts": 30,
+          "kind": "unused"
+        },
+        {
+          "x": 700,
+          "y": 170,
+          "radius": 24,
+          "is_on": true,
+          "waste_watts": 0,
+          "kind": "used"
+        }
+      ]
+    },
+    {
+      "lamps": [
+        {
+          "x": 680,
+          "y": 380,
+          "radius": 22,
+          "is_on": true,
+          "waste_watts": 30,
+          "kind": "unused"
+        },
+        {
+          "x": 760,
+          "y": 320,
+          "radius": 22,
+          "is_on": true,
+          "waste_watts": 50,
+          "kind": "unused"
+        },
+        {
+          "x": 840,
+          "y": 260,
+          "radius": 22,
+          "is_on": true,
+          "waste_watts": 55,
+          "kind": "unused"
+        },
+        {
+          "x": 610,
+          "y": 210,
+          "radius": 22,
+          "is_on": true,
+          "waste_watts": 0,
+          "kind": "used"
+        },
+        {
+          "x": 720,
+          "y": 180,
+          "radius": 22,
+          "is_on": true,
+          "waste_watts": 0,
+          "kind": "used"
+        }
+      ]
+    },
+    {
+      "lamps": [
+        {
+          "x": 820,
+          "y": 380,
+          "radius": 22,
+          "is_on": true,
+          "waste_watts": 40,
+          "kind": "unused"
+        },
+        {
+          "x": 730,
+          "y": 340,
+          "radius": 22,
+          "is_on": true,
+          "waste_watts": 35,
+          "kind": "unused"
+        },
+        {
+          "x": 640,
+          "y": 290,
+          "radius": 22,
+          "is_on": true,
+          "waste_watts": 45,
+          "kind": "unused"
+        },
+        {
+          "x": 870,
+          "y": 240,
+          "radius": 22,
+          "is_on": true,
+          "waste_watts": 50,
+          "kind": "unused"
+        },
+        {
+          "x": 760,
+          "y": 220,
+          "radius": 22,
+          "is_on": true,
+          "waste_watts": 0,
+          "kind": "used"
+        }
+      ]
+    },
+    {
+      "lamps": [
+        {
+          "x": 860,
+          "y": 380,
+          "radius": 20,
+          "is_on": true,
+          "waste_watts": 50,
+          "kind": "unused"
+        },
+        {
+          "x": 780,
+          "y": 340,
+          "radius": 20,
+          "is_on": true,
+          "waste_watts": 45,
+          "kind": "unused"
+        },
+        {
+          "x": 700,
+          "y": 300,
+          "radius": 20,
+          "is_on": true,
+          "waste_watts": 40,
+          "kind": "unused"
+        },
+        {
+          "x": 620,
+          "y": 260,
+          "radius": 20,
+          "is_on": true,
+          "waste_watts": 35,
+          "kind": "unused"
+        },
+        {
+          "x": 900,
+          "y": 220,
+          "radius": 20,
+          "is_on": true,
+          "waste_watts": 30,
+          "kind": "unused"
+        },
+        {
+          "x": 820,
+          "y": 210,
+          "radius": 20,
+          "is_on": true,
+          "waste_watts": 0,
+          "kind": "used"
+        },
+        {
+          "x": 670,
+          "y": 190,
+          "radius": 20,
+          "is_on": true,
+          "waste_watts": 0,
+          "kind": "used"
+        }
+      ]
+    },
+    {
+      "lamps": [
+        {
+          "x": 880,
+          "y": 390,
+          "radius": 19,
+          "is_on": true,
+          "waste_watts": 55,
+          "kind": "unused"
+        },
+        {
+          "x": 810,
+          "y": 350,
+          "radius": 19,
+          "is_on": true,
+          "waste_watts": 45,
+          "kind": "unused"
+        },
+        {
+          "x": 740,
+          "y": 315,
+          "radius": 19,
+          "is_on": true,
+          "waste_watts": 40,
+          "kind": "unused"
+        },
+        {
+          "x": 670,
+          "y": 280,
+          "radius": 19,
+          "is_on": true,
+          "waste_watts": 35,
+          "kind": "unused"
+        },
+        {
+          "x": 905,
+          "y": 245,
+          "radius": 19,
+          "is_on": true,
+          "waste_watts": 0,
+          "kind": "used"
+        },
+        {
+          "x": 770,
+          "y": 230,
+          "radius": 19,
+          "is_on": true,
+          "waste_watts": 0,
+          "kind": "used"
+        },
+        {
+          "x": 640,
+          "y": 210,
+          "radius": 19,
+          "is_on": true,
+          "waste_watts": 0,
+          "kind": "used"
+        }
+      ]
+    },
+    {
+      "lamps": [
+        {
+          "x": 900,
+          "y": 395,
+          "radius": 18,
+          "is_on": true,
+          "waste_watts": 60,
+          "kind": "unused"
+        },
+        {
+          "x": 845,
+          "y": 360,
+          "radius": 18,
+          "is_on": true,
+          "waste_watts": 50,
+          "kind": "unused"
+        },
+        {
+          "x": 790,
+          "y": 325,
+          "radius": 18,
+          "is_on": true,
+          "waste_watts": 45,
+          "kind": "unused"
+        },
+        {
+          "x": 735,
+          "y": 290,
+          "radius": 18,
+          "is_on": true,
+          "waste_watts": 40,
+          "kind": "unused"
+        },
+        {
+          "x": 680,
+          "y": 255,
+          "radius": 18,
+          "is_on": true,
+          "waste_watts": 35,
+          "kind": "unused"
+        },
+        {
+          "x": 860,
+          "y": 250,
+          "radius": 18,
+          "is_on": true,
+          "waste_watts": 0,
+          "kind": "used"
+        },
+        {
+          "x": 760,
+          "y": 205,
+          "radius": 18,
+          "is_on": true,
+          "waste_watts": 0,
+          "kind": "used"
+        },
+        {
+          "x": 620,
+          "y": 190,
+          "radius": 18,
+          "is_on": true,
+          "waste_watts": 0,
+          "kind": "used"
+        }
+      ]
+    },
+    {
+      "lamps": [
+        {
+          "x": 910,
+          "y": 400,
+          "radius": 17,
+          "is_on": true,
+          "waste_watts": 60,
+          "kind": "unused"
+        },
+        {
+          "x": 860,
+          "y": 370,
+          "radius": 17,
+          "is_on": true,
+          "waste_watts": 55,
+          "kind": "unused"
+        },
+        {
+          "x": 810,
+          "y": 340,
+          "radius": 17,
+          "is_on": true,
+          "waste_watts": 50,
+          "kind": "unused"
+        },
+        {
+          "x": 760,
+          "y": 310,
+          "radius": 17,
+          "is_on": true,
+          "waste_watts": 45,
+          "kind": "unused"
+        },
+        {
+          "x": 710,
+          "y": 280,
+          "radius": 17,
+          "is_on": true,
+          "waste_watts": 40,
+          "kind": "unused"
+        },
+        {
+          "x": 660,
+          "y": 250,
+          "radius": 17,
+          "is_on": true,
+          "waste_watts": 35,
+          "kind": "unused"
+        },
+        {
+          "x": 900,
+          "y": 255,
+          "radius": 17,
+          "is_on": true,
+          "waste_watts": 0,
+          "kind": "used"
+        },
+        {
+          "x": 830,
+          "y": 225,
+          "radius": 17,
+          "is_on": true,
+          "waste_watts": 0,
+          "kind": "used"
+        },
+        {
+          "x": 745,
+          "y": 215,
+          "radius": 17,
+          "is_on": true,
+          "waste_watts": 0,
+          "kind": "used"
+        },
+        {
+          "x": 620,
+          "y": 185,
+          "radius": 17,
+          "is_on": true,
+          "waste_watts": 0,
+          "kind": "used"
+        }
+      ]
+    },
+    {
+      "lamps": [
+        {
+          "x": 915,
+          "y": 405,
+          "radius": 16,
+          "is_on": true,
+          "waste_watts": 65,
+          "kind": "unused"
+        },
+        {
+          "x": 870,
+          "y": 378,
+          "radius": 16,
+          "is_on": true,
+          "waste_watts": 60,
+          "kind": "unused"
+        },
+        {
+          "x": 825,
+          "y": 351,
+          "radius": 16,
+          "is_on": true,
+          "waste_watts": 55,
+          "kind": "unused"
+        },
+        {
+          "x": 780,
+          "y": 324,
+          "radius": 16,
+          "is_on": true,
+          "waste_watts": 50,
+          "kind": "unused"
+        },
+        {
+          "x": 735,
+          "y": 297,
+          "radius": 16,
+          "is_on": true,
+          "waste_watts": 45,
+          "kind": "unused"
+        },
+        {
+          "x": 690,
+          "y": 270,
+          "radius": 16,
+          "is_on": true,
+          "waste_watts": 40,
+          "kind": "unused"
+        },
+        {
+          "x": 645,
+          "y": 243,
+          "radius": 16,
+          "is_on": true,
+          "waste_watts": 35,
+          "kind": "unused"
+        },
+        {
+          "x": 890,
+          "y": 245,
+          "radius": 16,
+          "is_on": true,
+          "waste_watts": 0,
+          "kind": "used"
+        },
+        {
+          "x": 840,
+          "y": 220,
+          "radius": 16,
+          "is_on": true,
+          "waste_watts": 0,
+          "kind": "used"
+        },
+        {
+          "x": 770,
+          "y": 205,
+          "radius": 16,
+          "is_on": true,
+          "waste_watts": 0,
+          "kind": "used"
+        },
+        {
+          "x": 670,
+          "y": 190,
+          "radius": 16,
+          "is_on": true,
+          "waste_watts": 0,
+          "kind": "used"
+        }
+      ]
+    },
+    {
+      "lamps": [
+        {
+          "x": 920,
+          "y": 410,
+          "radius": 15,
+          "is_on": true,
+          "waste_watts": 70,
+          "kind": "unused"
+        },
+        {
+          "x": 880,
+          "y": 385,
+          "radius": 15,
+          "is_on": true,
+          "waste_watts": 65,
+          "kind": "unused"
+        },
+        {
+          "x": 840,
+          "y": 360,
+          "radius": 15,
+          "is_on": true,
+          "waste_watts": 60,
+          "kind": "unused"
+        },
+        {
+          "x": 800,
+          "y": 335,
+          "radius": 15,
+          "is_on": true,
+          "waste_watts": 55,
+          "kind": "unused"
+        },
+        {
+          "x": 760,
+          "y": 310,
+          "radius": 15,
+          "is_on": true,
+          "waste_watts": 50,
+          "kind": "unused"
+        },
+        {
+          "x": 720,
+          "y": 285,
+          "radius": 15,
+          "is_on": true,
+          "waste_watts": 45,
+          "kind": "unused"
+        },
+        {
+          "x": 680,
+          "y": 260,
+          "radius": 15,
+          "is_on": true,
+          "waste_watts": 40,
+          "kind": "unused"
+        },
+        {
+          "x": 640,
+          "y": 235,
+          "radius": 15,
+          "is_on": true,
+          "waste_watts": 35,
+          "kind": "unused"
+        },
+        {
+          "x": 905,
+          "y": 260,
+          "radius": 15,
+          "is_on": true,
+          "waste_watts": 0,
+          "kind": "used"
+        },
+        {
+          "x": 860,
+          "y": 230,
+          "radius": 15,
+          "is_on": true,
+          "waste_watts": 0,
+          "kind": "used"
+        },
+        {
+          "x": 810,
+          "y": 210,
+          "radius": 15,
+          "is_on": true,
+          "waste_watts": 0,
+          "kind": "used"
+        },
+        {
+          "x": 750,
+          "y": 195,
+          "radius": 15,
+          "is_on": true,
+          "waste_watts": 0,
+          "kind": "used"
+        },
+        {
+          "x": 690,
+          "y": 180,
+          "radius": 15,
+          "is_on": true,
+          "waste_watts": 0,
+          "kind": "used"
+        }
+      ]
+    }
   ]
 }
