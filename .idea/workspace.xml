@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2d5c9593-d319-4de5-ad47-0b7e6f45cf79" name="Changes" comment="jeu version 1">
+    <list default="true" id="2d5c9593-d319-4de5-ad47-0b7e6f45cf79" name="Changes" comment="jeu avec 10 niveaux">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -151,12 +151,29 @@
       <option name="project" value="LOCAL" />
       <updated>1773739658479</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="jeu avec 10 niveaux">
+      <option name="closed" value="true" />
+      <created>1773740876442</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1773740876442</updated>
+    </task>
+    <task id="LOCAL-00005" summary="jeu avec 10 niveaux">
+      <option name="closed" value="true" />
+      <created>1773740896375</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1773740896375</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="init" />
     <MESSAGE value="jeu version 1" />
-    <option name="LAST_COMMIT_MESSAGE" value="jeu version 1" />
+    <MESSAGE value="jeu avec 10 niveaux" />
+    <option name="LAST_COMMIT_MESSAGE" value="jeu avec 10 niveaux" />
   </component>
 </project>
