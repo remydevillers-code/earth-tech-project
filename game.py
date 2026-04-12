@@ -171,14 +171,14 @@ def play_sound(sounds: dict, key: str, muted: bool) -> None:
 # 3) ETAT ET GAMEPLAY
 # =====================
 
-def make_lamps(lamps_conf: list[dict]) -> list[dict]:
+def make_lamps(lamps_conf: list[dict], scale_x: float = 1.0, scale_y: float = 1.0) -> list[dict]:
     lamps = []
     for lamp_conf in lamps_conf:
         lamps.append(
             {
-                "x": lamp_conf["x"],
-                "y": lamp_conf["y"],
-                "radius": lamp_conf["radius"],
+                "x": lamp_conf["x"] * scale_x,
+                "y": lamp_conf["y"] * scale_y,
+                "radius": int(lamp_conf["radius"] * min(scale_x, scale_y)),
                 "is_on": lamp_conf["is_on"],
                 "waste_watts": lamp_conf["waste_watts"],
                 "kind": lamp_conf["kind"],
@@ -187,36 +187,53 @@ def make_lamps(lamps_conf: list[dict]) -> list[dict]:
     return lamps
 
 
-def make_game_state(config: dict) -> dict:
+def make_game_state(config: dict, real_width: int = 0, real_height: int = 0) -> dict:
     player_conf = config["player"]
     window_conf = config["window"]
     sim_conf = config["simulation"]
+
+    base_w = window_conf["width"]
+    base_h = window_conf["height"]
+    if real_width == 0:
+        real_width = base_w
+    if real_height == 0:
+        real_height = base_h
+    scale_x = real_width  / base_w
+    scale_y = real_height / base_h
+    scale   = min(scale_x, scale_y)
 
     level_index = 0
     levels = config["levels"]
 
     return {
-        "window_width": window_conf["width"],
-        "window_height": window_conf["height"],
+        "window_width": real_width,
+        "window_height": real_height,
+        "game_w": real_width,
+        "game_h": real_height,
+        "offset_x": 0,
+        "offset_y": 0,
         "window_title": window_conf["title"],
         "fps_limit": sim_conf["fps_limit"],
         "time_step": sim_conf["time_step"],
         "gravity": sim_conf["gravity"],
-        "projectile_radius": sim_conf["projectile_radius"],
+        "projectile_radius": int(sim_conf["projectile_radius"] * min(scale_x, scale_y)),
         "projectile_mass": sim_conf["projectile_mass"],
         "max_projectiles": sim_conf["max_projectiles"],
         "max_shots_per_level": sim_conf.get("max_shots_per_level", 10),
-        "player_x": player_conf["x"],
-        "player_y": player_conf["y"],
+        "player_x": player_conf["x"] * scale_x,
+        "player_y": player_conf["y"] * scale_y,
         "power": 24.0,
         "angle": 42.0,
         "power_min": player_conf["power_min"],
         "power_max": player_conf["power_max"],
         "angle_min": player_conf["angle_min"],
         "angle_max": player_conf["angle_max"],
+        "scale": scale,
+        "scale_x": scale_x,
+        "scale_y": scale_y,
         "levels": levels,
         "level_index": level_index,
-        "lamps": make_lamps(levels[level_index]["lamps"]),
+        "lamps": make_lamps(levels[level_index]["lamps"], scale_x, scale_y),
         "projectiles": [],
         "energy_saved_wh": 0.0,
         "score": 0,
@@ -301,7 +318,7 @@ def prepare_next_level(game: dict, sounds: dict) -> None:
 
 def load_level(game: dict, level_index: int) -> None:
     game["level_index"] = level_index
-    game["lamps"] = make_lamps(game["levels"][level_index]["lamps"])
+    game["lamps"] = make_lamps(game["levels"][level_index]["lamps"], game["scale_x"], game["scale_y"])
     game["projectiles"] = []
     game["shots_in_level"] = 0
     game["state"] = "playing"
@@ -408,22 +425,25 @@ def make_color(red: int, green: int, blue: int) -> tuple[int, int, int]:
 
 
 def draw_background(screen, game: dict) -> None:
-    width = game["window_width"]
-    height = game["window_height"]
-    pygame.draw.rect(screen, make_color(223, 246, 255), (0, 0, width, height))
-    pygame.draw.rect(screen, make_color(183, 228, 165), (0, height - 100, width, 100))
+    w = game["window_width"]
+    h = game["window_height"]
+    ground_h = int(100 * game["scale_y"])
+    pygame.draw.rect(screen, make_color(223, 246, 255), (0, 0, w, h))
+    pygame.draw.rect(screen, make_color(183, 228, 165), (0, h - ground_h, w, ground_h))
 
 
 def draw_player(screen, game: dict) -> None:
     x = int(game["player_x"])
     y = int(game["player_y"])
-    pygame.draw.circle(screen, make_color(255, 183, 3), (x, y - 25), 25)
+    s = min(game["scale_x"], game["scale_y"])
+    r = int(25 * s)
+    pygame.draw.circle(screen, make_color(255, 183, 3), (x, y - r), r)
 
-    aim_len = 45
+    aim_len = int(45 * s)
     angle_rad = deg_to_rad(game["angle"])
     end_x = int(x + aim_len * math.cos(angle_rad))
-    end_y = int((y - 25) - aim_len * math.sin(angle_rad))
-    pygame.draw.line(screen, make_color(42, 157, 143), (x, y - 25), (end_x, end_y), 4)
+    end_y = int((y - r) - aim_len * math.sin(angle_rad))
+    pygame.draw.line(screen, make_color(42, 157, 143), (x, y - r), (end_x, end_y), max(1, int(4 * s)))
 
 
 def lamp_color(lamp: dict) -> tuple[int, int, int]:
@@ -485,7 +505,12 @@ def draw_remaining_shots(screen, game: dict, large_font) -> None:
 
 
 def mute_button_rect(game: dict) -> pygame.Rect:
-    return pygame.Rect(game["window_width"] - 180, 58, 160, 42)
+    scale = game.get("scale", 1.0)
+    w = int(160 * scale)
+    h = int(42  * scale)
+    x = game["window_width"] - w - int(20 * scale)
+    y = int(58 * scale)
+    return pygame.Rect(x, y, w, h)
 
 
 def draw_mute_button(screen, game: dict, font) -> None:
@@ -508,10 +533,12 @@ def draw_mute_button(screen, game: dict, font) -> None:
 def draw_hud(screen, game: dict, font, large_font) -> None:
     lines = make_hud_text(game)
     y = 10
+    x = 10
+    spacing = int(22 * game.get("scale", 1.0))
     for line in lines:
         text_surface = font.render(line, True, make_color(29, 53, 87))
-        screen.blit(text_surface, (10, y))
-        y = y + 22
+        screen.blit(text_surface, (x, y))
+        y = y + spacing
     draw_remaining_shots(screen, game, large_font)
     draw_mute_button(screen, game, font)
 
@@ -526,7 +553,11 @@ def draw_center_message(screen, game: dict, huge_font, font) -> None:
     if game["state"] == "playing":
         return
 
-    overlay = pygame.Surface((game["window_width"], game["window_height"]))
+    w = game["window_width"]
+    h = game["window_height"]
+    scale = min(game["scale_x"], game["scale_y"])
+
+    overlay = pygame.Surface((w, h))
     overlay.set_alpha(170)
     overlay.fill(make_color(10, 20, 40))
     screen.blit(overlay, (0, 0))
@@ -544,21 +575,13 @@ def draw_center_message(screen, game: dict, huge_font, font) -> None:
     title_surface = huge_font.render(title, True, make_color(255, 255, 255))
     subtitle_surface = font.render(subtitle, True, make_color(255, 240, 200))
 
-    tx, ty = center_text_position(
-        game["window_width"],
-        game["window_height"],
-        title_surface.get_width(),
-        title_surface.get_height(),
-    )
-    sx, sy = center_text_position(
-        game["window_width"],
-        game["window_height"],
-        subtitle_surface.get_width(),
-        subtitle_surface.get_height(),
-    )
+    tx = (w - title_surface.get_width()) // 2
+    ty = (h - title_surface.get_height()) // 2
+    sx = (w - subtitle_surface.get_width()) // 2
+    sy = (h - subtitle_surface.get_height()) // 2
 
-    screen.blit(title_surface, (tx, ty - 35))
-    screen.blit(subtitle_surface, (sx, sy + 30))
+    screen.blit(title_surface, (tx, ty - int(35 * scale)))
+    screen.blit(subtitle_surface, (sx, sy + int(30 * scale)))
 
 
 def render_frame(screen, game: dict, font, large_font, huge_font) -> None:
@@ -641,26 +664,30 @@ def run_game_loop(screen, game: dict, font, large_font, huge_font, sounds: dict)
 # 6) FONCTION PUBLIQUE : appelée depuis menu.py
 # ===================
 
-def run_game(screen) -> None:
-    """Lance une partie complète depuis l'écran pygame existant et revient quand le joueur appuie sur ECHAP."""
+def run_game(screen, real_width: int = 0, real_height: int = 0) -> None:
+    """Lance une partie complète en plein écran et revient au menu quand le joueur appuie sur ECHAP."""
     base_dir = Path(__file__).resolve().parents[0]
     config = load_settings(base_dir / "data" / "settings.json")
 
-    # Redimensionner la fenêtre aux dimensions définies dans settings.json
-    width = config["window"]["width"]
-    height = config["window"]["height"]
-    screen = pygame.display.set_mode((width, height))
+    # Utiliser la résolution passée par le menu (plein écran)
+    if real_width == 0 or real_height == 0:
+        info = pygame.display.Info()
+        real_width  = info.current_w
+        real_height = info.current_h
+
+    screen = pygame.display.set_mode((real_width, real_height), pygame.FULLSCREEN)
     pygame.display.set_caption(config["window"]["title"])
 
-    font = pygame.font.SysFont("arial", 20)
-    large_font = pygame.font.SysFont("arial", 34, bold=True)
-    huge_font = pygame.font.SysFont("arial", 58, bold=True)
+    scale = min(real_width / config["window"]["width"], real_height / config["window"]["height"])
+    font       = pygame.font.SysFont("arial", int(20 * scale))
+    large_font = pygame.font.SysFont("arial", int(34 * scale), bold=True)
+    huge_font  = pygame.font.SysFont("arial", int(58 * scale), bold=True)
 
-    game = make_game_state(config)
+    game = make_game_state(config, real_width, real_height)
     sounds = load_sounds(base_dir)
 
     run_game_loop(screen, game, font, large_font, huge_font, sounds)
 
-    # Remettre la fenêtre aux dimensions du menu (800x600) avant de revenir
-    pygame.display.set_mode((800, 600))
+    # Revenir en plein écran menu
+    pygame.display.set_mode((real_width, real_height), pygame.FULLSCREEN)
     pygame.display.set_caption("La Maison Verte")

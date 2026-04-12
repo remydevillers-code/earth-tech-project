@@ -5,8 +5,6 @@ import math
 from credits import show_credits
 from game import run_game
 
-WIDTH, HEIGHT = 800, 600
-
 GREEN_LIGHT = (165, 245, 112)
 GREEN_MID   = (76, 175, 80)
 GREEN_BTN   = (26, 107, 46)
@@ -17,13 +15,13 @@ MOON_COLOR  = (245, 208, 96)
 MOON_INNER  = (255, 245, 200)
 
 
-def draw_bg(surface):
-    for y in range(HEIGHT):
-        t = y / HEIGHT
+def draw_bg(surface, width, height):
+    for y in range(height):
+        t = y / height
         r = int(3  + (10 - 3)  * t)
         g = int(8  + (25 - 8)  * t)
         b = int(15 + (16 - 15) * t)
-        pygame.draw.line(surface, (r, g, b), (0, y), (WIDTH, y))
+        pygame.draw.line(surface, (r, g, b), (0, y), (width, y))
 
 
 def draw_stars(surface, stars, tick):
@@ -33,18 +31,19 @@ def draw_stars(surface, stars, tick):
         pygame.draw.circle(surface, (brightness, brightness, brightness), (x, y), size)
 
 
-def draw_moon(surface):
-    pygame.draw.circle(surface, MOON_COLOR, (680, 55), 28)
-    pygame.draw.circle(surface, MOON_INNER, (672, 48), 20)
+def draw_moon(surface, width):
+    cx = width - 120
+    pygame.draw.circle(surface, MOON_COLOR, (cx, 55), 28)
+    pygame.draw.circle(surface, MOON_INNER, (cx - 8, 48), 20)
 
 
-def draw_ground(surface):
-    for y in range(HEIGHT - 58, HEIGHT):
-        t = (y - (HEIGHT - 58)) / 58
+def draw_ground(surface, width, height):
+    for y in range(height - 58, height):
+        t = (y - (height - 58)) / 58
         r = int(13 + (6  - 13) * t)
         g = int(61 + (20 - 61) * t)
         b = int(26 + (8  - 26) * t)
-        pygame.draw.line(surface, (r, g, b), (0, y), (WIDTH, y))
+        pygame.draw.line(surface, (r, g, b), (0, y), (width, y))
 
 
 def draw_button(surface, rect, text, font, hovered, big=False):
@@ -61,14 +60,19 @@ def draw_button(surface, rect, text, font, hovered, big=False):
 
 # ── MENU PRINCIPAL ────────────────────────────────────────────
 def main_menu():
-    # Tout ce qui nécessite pygame initialisé est créé ici
-    screen = pygame.display.set_mode((WIDTH, HEIGHT))
+    # Résolution réelle de l'écran → plein écran
+    info   = pygame.display.Info()
+    WIDTH  = info.current_w
+    HEIGHT = info.current_h
+    screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.FULLSCREEN)
     pygame.display.set_caption("La Maison Verte")
 
-    font_title = pygame.font.SysFont("Georgia", 62, bold=True)
-    font_big   = pygame.font.SysFont("Georgia", 36, bold=True)
-    font_small = pygame.font.SysFont("Georgia", 22)
-    font_sub   = pygame.font.SysFont("Georgia", 15)
+    # Taille des polices proportionnelle à la hauteur d'écran
+    scale      = HEIGHT / 600
+    font_title = pygame.font.SysFont("Georgia", int(62 * scale), bold=True)
+    font_big   = pygame.font.SysFont("Georgia", int(36 * scale), bold=True)
+    font_small = pygame.font.SysFont("Georgia", int(22 * scale))
+    font_sub   = pygame.font.SysFont("Georgia", int(15 * scale))
 
     stars = [
         (random.randint(0, WIDTH),
@@ -78,11 +82,12 @@ def main_menu():
         for _ in range(150)
     ]
 
-    clock  = pygame.time.Clock()
-    tick   = 0
+    clock = pygame.time.Clock()
+    tick  = 0
 
-    btn_play   = pygame.Rect(WIDTH // 2 - 170, 290, 340, 86)
-    btn_credit = pygame.Rect(WIDTH // 2 - 94,  400, 188, 58)
+    # Boutons centrés et scalés
+    btn_play   = pygame.Rect(WIDTH // 2 - int(170 * scale), int(290 * scale), int(340 * scale), int(86 * scale))
+    btn_credit = pygame.Rect(WIDTH // 2 - int(94  * scale), int(400 * scale), int(188 * scale), int(58 * scale))
 
     current_screen = "menu"
 
@@ -99,33 +104,30 @@ def main_menu():
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 if current_screen == "menu":
                     if btn_play.collidepoint(mouse):
-                        # Lance le jeu — revient au menu quand le joueur appuie sur ECHAP
-                        run_game(screen)
-                        # Remettre la fenêtre du menu après le jeu
-                        screen = pygame.display.set_mode((WIDTH, HEIGHT))
-                        pygame.display.set_caption("La Maison Verte")
+                        run_game(screen, WIDTH, HEIGHT)
                     elif btn_credit.collidepoint(mouse):
                         current_screen = "credits"
                 else:
                     current_screen = "menu"
 
         # ── Dessin ──
-        draw_bg(screen)
+        draw_bg(screen, WIDTH, HEIGHT)
         draw_stars(screen, stars, tick)
-        draw_moon(screen)
-        draw_ground(screen)
+        draw_moon(screen, WIDTH)
+        draw_ground(screen, WIDTH, HEIGHT)
 
         if current_screen == "menu":
             title        = font_title.render("LA MAISON VERTE", True, GREEN_LIGHT)
             title_shadow = font_title.render("LA MAISON VERTE", True, (0, 30, 0))
             tx = WIDTH // 2 - title.get_width() // 2
-            screen.blit(title_shadow, (tx + 3, 163))
-            screen.blit(title,        (tx,     160))
+            ty = int(160 * scale)
+            screen.blit(title_shadow, (tx + 3, ty + 3))
+            screen.blit(title,        (tx,     ty))
 
             sub = font_sub.render(
                 "La planète a besoin de vous… commencez chez vous !",
                 True, GREEN_SUB)
-            screen.blit(sub, (WIDTH // 2 - sub.get_width() // 2, 248))
+            screen.blit(sub, (WIDTH // 2 - sub.get_width() // 2, int(248 * scale)))
 
             draw_button(screen, btn_play,   "▶  JOUER", font_big,   btn_play.collidepoint(mouse),   big=True)
             draw_button(screen, btn_credit, "Crédits",  font_small, btn_credit.collidepoint(mouse))
