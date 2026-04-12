@@ -35,6 +35,6 @@ def show_credits(screen, WIDTH, HEIGHT, font_big, font_small, font_sub,
         screen.blit(label, (WIDTH // 2 - label.get_width() // 2,
                             rect_y + 30 + i * 46))
 
-    # Retour
-    esc = font_sub.render("Appuyez sur Échap pour revenir", True, (74, 122, 80))
+
+    esc = font_sub.render("revenir", True, (74, 122, 80))
     screen.blit(esc, (WIDTH // 2 - esc.get_width() // 2, rect_y + rect_h + 20))
