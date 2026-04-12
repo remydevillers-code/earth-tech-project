@@ -513,6 +513,30 @@ def mute_button_rect(game: dict) -> pygame.Rect:
     return pygame.Rect(x, y, w, h)
 
 
+def back_button_rect(game: dict) -> pygame.Rect:
+    scale = game.get("scale", 1.0)
+    w = int(150 * scale)
+    h = int(42  * scale)
+    x = int(20 * scale)
+    y = game["window_height"] - h - int(20 * scale)
+    return pygame.Rect(x, y, w, h)
+
+
+def draw_back_button(screen, game: dict, font) -> None:
+    rect = back_button_rect(game)
+    mouse = pygame.mouse.get_pos()
+    hovered = rect.collidepoint(mouse)
+    bg     = make_color(46, 158, 74) if hovered else make_color(26, 107, 46)
+    border = make_color(165, 245, 112) if hovered else make_color(76, 175, 80)
+    pygame.draw.rect(screen, make_color(2, 14, 5), rect.move(4, 4), border_radius=10)
+    pygame.draw.rect(screen, bg,     rect, border_radius=10)
+    pygame.draw.rect(screen, border, rect, width=3, border_radius=10)
+    txt_color = make_color(165, 245, 112) if hovered else make_color(200, 240, 176)
+    label = font.render("← Menu", True, txt_color)
+    screen.blit(label, (rect.centerx - label.get_width()  // 2,
+                        rect.centery - label.get_height() // 2))
+
+
 def draw_mute_button(screen, game: dict, font) -> None:
     rect = mute_button_rect(game)
     if game["muted"]:
@@ -541,6 +565,7 @@ def draw_hud(screen, game: dict, font, large_font) -> None:
         y = y + spacing
     draw_remaining_shots(screen, game, large_font)
     draw_mute_button(screen, game, font)
+    draw_back_button(screen, game, font)
 
 
 def center_text_position(screen_width: int, screen_height: int, text_width: int, text_height: int) -> tuple[int, int]:
@@ -634,6 +659,8 @@ def apply_keydown_action(key: int, game: dict, sounds: dict) -> None:
 def handle_mouse_click(game: dict, pos: tuple[int, int]) -> None:
     if mute_button_rect(game).collidepoint(pos):
         toggle_mute(game)
+    elif back_button_rect(game).collidepoint(pos):
+        game["running"] = False
 
 
 def process_events(game: dict, sounds: dict) -> None:

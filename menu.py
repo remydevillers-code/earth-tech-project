@@ -107,8 +107,11 @@ def main_menu():
                         run_game(screen, WIDTH, HEIGHT)
                     elif btn_credit.collidepoint(mouse):
                         current_screen = "credits"
-                else:
-                    current_screen = "menu"
+                elif current_screen == "credits":
+                    from credits import back_button_rect
+                    scale = HEIGHT / 600
+                    if back_button_rect(WIDTH, HEIGHT, scale).collidepoint(mouse):
+                        current_screen = "menu"
 
         # ── Dessin ──
         draw_bg(screen, WIDTH, HEIGHT)
