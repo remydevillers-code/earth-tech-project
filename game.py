@@ -284,7 +284,7 @@ def spawn_projectile(game, sounds):
 
 def _fail(game, reason):
     game.update({"state": "game_over", "projectiles": [],
-                 "feedback": f"{reason}  •  R pour réessayer"})
+                 "feedback": f"{reason}  •  Clique sur le bouton pour recommencer"})
 
 def _win_level(game, sounds):
     play_sound(sounds, "win", game["muted"])
@@ -325,11 +325,13 @@ def simulate_step(game, sounds):
     for p in game["projectiles"]:
         if not p["alive"]: continue
         for lamp in game["lamps"]:
-            if not lamp["is_on"]: continue
             if circle_hit(p["x"], p["y"], pr, lamp["x"], lamp["y"], lamp["radius"]):
                 p["alive"] = False
                 if lamp["kind"] == "used":
-                    _fail(game, "Oups ! Tu as éteint une lampe utile.")
+                    _fail(game, "Oups ! Tu as touché une lampe utile.")
+                    play_sound(sounds, "fail", game["muted"]); return
+                if not lamp["is_on"]:
+                    _fail(game, "Cette lampe est déjà éteinte !")
                     play_sound(sounds, "fail", game["muted"]); return
                 lamp["is_on"] = False
                 game["score"]           += 100
@@ -495,7 +497,7 @@ def draw_hud(screen, game, font, large_font):
     _panel(screen, pygame.Rect(fbx-12, fby-6, fb.get_width()+24, fb.get_height()+12))
     screen.blit(fb, (fbx, fby))
 
-    _btn(screen, mute_rect(game), "🔊 SON" if not game["muted"] else "🔇 MUET", font)
+    _btn(screen, mute_rect(game), "SON" if not game["muted"] else "MUET", font)
     _btn(screen, back_rect(game), "← Menu", font)
     draw_power_bar(screen, game)
 
@@ -535,9 +537,9 @@ def draw_overlay(screen, game, huge_font, font):
 
     # Bouton action cliquable
     btn_labels = {
-        "level_transition": "▶  Niveau suivant",
-        "game_over":        "↺  Réessayer",
-        "victory":          "↺  Rejouer depuis le début",
+        "level_transition": "Niveau suivant",
+        "game_over":        "Réessayer",
+        "victory":          "Rejouer depuis le début",
     }
     lbl_text = btn_labels.get(state, "")
     if lbl_text:
