@@ -168,6 +168,38 @@ def play_sound(sounds: dict, key: str, muted: bool) -> None:
 
 
 # =====================
+# 2-ter) IMAGES LAMPES
+# =====================
+
+def load_lamp_images(base_dir: Path) -> dict:
+    """Charge lamp_on.png et lamp_off.png depuis le dossier du projet."""
+    images = {"on": None, "off": None, "loaded": False}
+    try:
+        path_on  = base_dir / "lamp_on.png"
+        path_off = base_dir / "lamp_off.png"
+        img_on  = pygame.image.load(str(path_on)).convert()
+        img_off = pygame.image.load(str(path_off)).convert()
+        # Rendre le fond noir transparent
+        img_on.set_colorkey((0, 0, 0))
+        img_off.set_colorkey((0, 0, 0))
+        images["on"]     = img_on
+        images["off"]    = img_off
+        images["loaded"] = True
+    except Exception as e:
+        print(f"[lamp images] impossible de charger: {e}")
+    return images
+
+
+def get_lamp_image(lamp: dict, lamp_images: dict) -> pygame.Surface | None:
+    """Retourne l'image redimensionnée pour cette lampe selon son radius."""
+    if not lamp_images.get("loaded"):
+        return None
+    src = lamp_images["on"] if lamp["is_on"] else lamp_images["off"]
+    size = int(lamp["radius"] * 2.8)
+    return pygame.transform.smoothscale(src, (size, size))
+
+
+# =====================
 # 3) ETAT ET GAMEPLAY
 # =====================
 
@@ -179,7 +211,7 @@ def make_lamps(lamps_conf: list[dict], scale_x: float = 1.0, scale_y: float = 1.
                 "x": lamp_conf["x"] * scale_x,
                 "y": lamp_conf["y"] * scale_y,
                 "radius": int(lamp_conf["radius"] * min(scale_x, scale_y)),
-                "is_on": lamp_conf["is_on"],
+                "is_on": False if lamp_conf["kind"] == "used" else lamp_conf["is_on"],
                 "waste_watts": lamp_conf["waste_watts"],
                 "kind": lamp_conf["kind"],
             }
@@ -461,15 +493,24 @@ def lamp_label(lamp: dict) -> str:
 
 
 def draw_lamps(screen, game: dict, font) -> None:
+    lamp_images = game.get("lamp_images", {"loaded": False})
     for lamp in game["lamps"]:
         x = int(lamp["x"])
         y = int(lamp["y"])
         radius = int(lamp["radius"])
 
-        pygame.draw.circle(screen, lamp_color(lamp), (x, y), radius)
-        pygame.draw.circle(screen, make_color(51, 51, 51), (x, y), radius, 2)
-        text_surface = font.render(lamp_label(lamp), True, make_color(20, 20, 20))
-        screen.blit(text_surface, (x - 20, y - 8))
+        img = get_lamp_image(lamp, lamp_images)
+        if img is not None:
+            # Centrer l'image sur la position de la lampe
+            screen.blit(img, (x - img.get_width() // 2, y - img.get_height() // 2))
+            # Hitbox en mode debug (décommenter pour visualiser) :
+            # pygame.draw.circle(screen, (255, 0, 0), (x, y), radius, 1)
+        else:
+            # Fallback : cercles colorés si images non disponibles
+            pygame.draw.circle(screen, lamp_color(lamp), (x, y), radius)
+            pygame.draw.circle(screen, make_color(51, 51, 51), (x, y), radius, 2)
+            text_surface = font.render(lamp_label(lamp), True, make_color(20, 20, 20))
+            screen.blit(text_surface, (x - 20, y - 8))
 
 
 def draw_projectiles(screen, game: dict) -> None:
@@ -712,6 +753,7 @@ def run_game(screen, real_width: int = 0, real_height: int = 0) -> None:
 
     game = make_game_state(config, real_width, real_height)
     sounds = load_sounds(base_dir)
+    game["lamp_images"] = load_lamp_images(base_dir)
 
     run_game_loop(screen, game, font, large_font, huge_font, sounds)
 
