@@ -66,7 +66,7 @@ def main_menu():
     WIDTH = info.current_w
     HEIGHT = info.current_h
     screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.FULLSCREEN)
-    pygame.display.set_caption("La Maison Verte")
+    pygame.display.set_caption("Eco Switch")
 
     # Taille des polices proportionnelle à la hauteur d'écran
     scale = HEIGHT / 600
@@ -134,8 +134,8 @@ def main_menu():
         draw_ground(screen, WIDTH, HEIGHT)
 
         if current_screen == "menu":
-            title = font_title.render("LA MAISON VERTE", True, GREEN_LIGHT)
-            title_shadow = font_title.render("LA MAISON VERTE", True, (0, 30, 0))
+            title = font_title.render("Eco Switch", True, GREEN_LIGHT)
+            title_shadow = font_title.render("Eco Switch", True, (0, 30, 0))
             tx = WIDTH // 2 - title.get_width() // 2
             ty = int(160 * scale)
             screen.blit(title_shadow, (tx + 3, ty + 3))
