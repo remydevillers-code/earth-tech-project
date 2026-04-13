@@ -25,8 +25,8 @@
     {
       "lamps": [
         {
-          "x": 700,
-          "y": 370,
+          "x": 620,
+          "y": 390,
           "radius": 24,
           "is_on": true,
           "waste_watts": 40,
@@ -41,8 +41,8 @@
           "kind": "unused"
         },
         {
-          "x": 620,
-          "y": 220,
+          "x": 500,
+          "y": 300,
           "radius": 24,
           "is_on": true,
           "waste_watts": 0,
