@@ -179,7 +179,6 @@ def load_lamp_images(base_dir: Path) -> dict:
         path_off = base_dir / "lamp_off.png"
         img_on  = pygame.image.load(str(path_on)).convert()
         img_off = pygame.image.load(str(path_off)).convert()
-        # Rendre le fond noir transparent
         img_on.set_colorkey((0, 0, 0))
         img_off.set_colorkey((0, 0, 0))
         images["on"]     = img_on
@@ -190,12 +189,30 @@ def load_lamp_images(base_dir: Path) -> dict:
     return images
 
 
+def load_sprite_images(base_dir: Path) -> dict:
+    """Charge player.png et ball.png depuis le dossier du projet."""
+    sprites = {"player": None, "ball": None, "loaded": False}
+    try:
+        img_player = pygame.image.load(str(base_dir / "player.png")).convert()
+        img_ball   = pygame.image.load(str(base_dir / "ball.png")).convert()
+        # Fond blanc transparent
+        img_player.set_colorkey((255, 255, 255))
+        img_ball.set_colorkey((255, 255, 255))
+        sprites["player"]  = img_player
+        sprites["ball"]    = img_ball
+        sprites["loaded"]  = True
+    except Exception as e:
+        print(f"[sprite images] impossible de charger: {e}")
+    return sprites
+
+
 def get_lamp_image(lamp: dict, lamp_images: dict) -> pygame.Surface | None:
     """Retourne l'image redimensionnée pour cette lampe selon son radius."""
     if not lamp_images.get("loaded"):
         return None
     src = lamp_images["on"] if lamp["is_on"] else lamp_images["off"]
-    size = int(lamp["radius"] * 2.8)
+    # Taille affichée : diamètre * 2.2 pour que la lampe soit bien visible
+    size = int(lamp["radius"] * 4.4)
     return pygame.transform.smoothscale(src, (size, size))
 
 
@@ -469,8 +486,17 @@ def draw_player(screen, game: dict) -> None:
     y = int(game["player_y"])
     s = min(game["scale_x"], game["scale_y"])
     r = int(25 * s)
-    pygame.draw.circle(screen, make_color(255, 183, 3), (x, y - r), r)
 
+    sprites = game.get("sprites", {"loaded": False})
+    if sprites.get("loaded") and sprites["player"] is not None:
+        size = int(r * 5)
+        img = pygame.transform.smoothscale(sprites["player"], (size, size))
+        screen.blit(img, (x - size // 2, y - size))
+    else:
+        # Fallback cercle
+        pygame.draw.circle(screen, make_color(255, 183, 3), (x, y - r), r)
+
+    # Ligne de visée toujours affichée
     aim_len = int(45 * s)
     angle_rad = deg_to_rad(game["angle"])
     end_x = int(x + aim_len * math.cos(angle_rad))
@@ -515,13 +541,16 @@ def draw_lamps(screen, game: dict, font) -> None:
 
 def draw_projectiles(screen, game: dict) -> None:
     radius = game["projectile_radius"]
+    sprites = game.get("sprites", {"loaded": False})
     for projectile in game["projectiles"]:
-        pygame.draw.circle(
-            screen,
-            make_color(131, 56, 236),
-            (int(projectile["x"]), int(projectile["y"])),
-            radius,
-        )
+        px = int(projectile["x"])
+        py = int(projectile["y"])
+        if sprites.get("loaded") and sprites["ball"] is not None:
+            size = radius * 2
+            img = pygame.transform.smoothscale(sprites["ball"], (size, size))
+            screen.blit(img, (px - size // 2, py - size // 2))
+        else:
+            pygame.draw.circle(screen, make_color(131, 56, 236), (px, py), radius)
 
 
 def make_hud_text(game: dict) -> list[str]:
@@ -723,7 +752,7 @@ def run_game_loop(screen, game: dict, font, large_font, huge_font, sounds: dict)
         render_frame(screen, game, font, large_font, huge_font)
 
         used_ms = clock.tick(game["fps_limit"])
-        budget_ms = 1000.0 / game["fps_limit"]
+        budget_ms = 10000000.0 / game["fps_limit"]
         if used_ms > budget_ms and game["state"] == "playing":
             game["feedback"] = "Calcul lourd: optimise le code pour eco-concevoir."
 
@@ -754,6 +783,7 @@ def run_game(screen, real_width: int = 0, real_height: int = 0) -> None:
     game = make_game_state(config, real_width, real_height)
     sounds = load_sounds(base_dir)
     game["lamp_images"] = load_lamp_images(base_dir)
+    game["sprites"]     = load_sprite_images(base_dir)
 
     run_game_loop(screen, game, font, large_font, huge_font, sounds)
 
