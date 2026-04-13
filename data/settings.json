@@ -177,8 +177,8 @@
     {
       "lamps": [
         {
-          "x": 860,
-          "y": 380,
+          "x": 620,
+          "y": 620,
           "radius": 20,
           "is_on": true,
           "waste_watts": 50,

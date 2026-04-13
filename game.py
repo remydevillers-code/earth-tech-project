@@ -295,8 +295,8 @@ def _win_level(game, sounds):
                      "feedback": f"Bravo ! Tu as terminé les {total} niveaux !"})
     else:
         game.update({"state": "level_transition", "projectiles": [],
-                     "transition_timer": 180,
-                     "feedback": f"Niveau {game['level_index']+1} terminé ! Suite dans…"})
+                     "transition_timer": 0,
+                     "feedback": f"Niveau {game['level_index']+1} terminé !"})
 
 def go_next(game):
     if game["state"] == "level_transition":
@@ -311,8 +311,6 @@ def restart_game(game):
 
 def simulate_step(game, sounds):
     if game["state"] == "level_transition":
-        game["transition_timer"] -= 1
-        if game["transition_timer"] <= 0: go_next(game)
         return
     if game["state"] != "playing": return
 
@@ -325,16 +323,18 @@ def simulate_step(game, sounds):
     for p in game["projectiles"]:
         if not p["alive"]: continue
         for lamp in game["lamps"]:
-            if not lamp["is_on"]: continue
             if circle_hit(p["x"], p["y"], pr, lamp["x"], lamp["y"], lamp["radius"]):
                 p["alive"] = False
                 if lamp["kind"] == "used":
-                    _fail(game, "Oups ! Tu as éteint une lampe utile.")
+                    _fail(game, "Oups ! Tu as touché une lampe utile.")
+                    play_sound(sounds, "fail", game["muted"]); return
+                if not lamp["is_on"]:
+                    _fail(game, "Cette lampe est déjà éteinte !")
                     play_sound(sounds, "fail", game["muted"]); return
                 lamp["is_on"] = False
                 game["score"]           += 100
                 game["energy_saved_wh"] += lamp["waste_watts"] / 60.0
-                game["feedback"]         = f"✓ {lamp['waste_watts']} W économisés !"
+                game["feedback"]         = f"{lamp['waste_watts']} W économisés !"
                 play_sound(sounds, "switch", game["muted"])
                 game["particles"] += make_particles(lamp["x"], lamp["y"])
                 break
@@ -495,8 +495,8 @@ def draw_hud(screen, game, font, large_font):
     _panel(screen, pygame.Rect(fbx-12, fby-6, fb.get_width()+24, fb.get_height()+12))
     screen.blit(fb, (fbx, fby))
 
-    _btn(screen, mute_rect(game), "🔊 SON" if not game["muted"] else "🔇 MUET", font)
-    _btn(screen, back_rect(game), "← Menu", font)
+    _btn(screen, mute_rect(game), "SON" if not game["muted"] else "MUET", font)
+    _btn(screen, back_rect(game), "Menu", font)
     draw_power_bar(screen, game)
 
 def overlay_action_rect(game):
@@ -527,17 +527,11 @@ def draw_overlay(screen, game, huge_font, font):
     sub = font.render(game["feedback"], True, (255,240,200))
     screen.blit(sub, (W//2-sub.get_width()//2, H//2-int(20*s)))
 
-    # Countdown pour transition auto
-    if state == "level_transition":
-        secs = math.ceil(game["transition_timer"] / 60)
-        cntd = huge_font.render(str(secs), True, (255,255,100))
-        screen.blit(cntd, (W//2-cntd.get_width()//2, H//2+int(10*s)))
-
     # Bouton action cliquable
     btn_labels = {
-        "level_transition": "▶  Niveau suivant",
-        "game_over":        "↺  Réessayer",
-        "victory":          "↺  Rejouer depuis le début",
+        "level_transition": "Niveau suivant",
+        "game_over":        "Réessayer",
+        "victory":          "Rejouer depuis le début",
     }
     lbl_text = btn_labels.get(state, "")
     if lbl_text:

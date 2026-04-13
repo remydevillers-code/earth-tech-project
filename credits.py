@@ -60,7 +60,7 @@ def show_credits(screen, WIDTH, HEIGHT, font_big, font_small, font_sub,
     pygame.draw.rect(screen, color,  btn, border_radius=14)
     pygame.draw.rect(screen, border, btn, width=3, border_radius=14)
     txt_color = GREEN_LIGHT if hovered else GREEN_TEXT
-    label = font_small.render("← Retour", True, txt_color)
+    label = font_small.render("Retour", True, txt_color)
     screen.blit(label, (btn.centerx - label.get_width() // 2,
                         btn.centery - label.get_height() // 2))
 

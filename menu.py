@@ -146,7 +146,7 @@ def main_menu():
                 True, GREEN_SUB)
             screen.blit(sub, (WIDTH // 2 - sub.get_width() // 2, int(230 * scale)))  # Sous-titre légèrement remonté
 
-            draw_button(screen, btn_play, "▶  JOUER", font_big, btn_play.collidepoint(mouse), big=True)
+            draw_button(screen, btn_play, "JOUER", font_big, btn_play.collidepoint(mouse), big=True)
             draw_button(screen, btn_credit, "Crédits", font_small, btn_credit.collidepoint(mouse))
 
             # 3. Affichage du bouton Quitter
