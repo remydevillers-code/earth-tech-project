@@ -59,20 +59,21 @@ def draw_button(surface, rect, text, font, hovered, big=False):
 
 
 # ── MENU PRINCIPAL ────────────────────────────────────────────
+# ── MENU PRINCIPAL ────────────────────────────────────────────
 def main_menu():
     # Résolution réelle de l'écran → plein écran
-    info   = pygame.display.Info()
-    WIDTH  = info.current_w
+    info = pygame.display.Info()
+    WIDTH = info.current_w
     HEIGHT = info.current_h
     screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.FULLSCREEN)
     pygame.display.set_caption("La Maison Verte")
 
     # Taille des polices proportionnelle à la hauteur d'écran
-    scale      = HEIGHT / 600
+    scale = HEIGHT / 600
     font_title = pygame.font.SysFont("Georgia", int(62 * scale), bold=True)
-    font_big   = pygame.font.SysFont("Georgia", int(36 * scale), bold=True)
+    font_big = pygame.font.SysFont("Georgia", int(36 * scale), bold=True)
     font_small = pygame.font.SysFont("Georgia", int(22 * scale))
-    font_sub   = pygame.font.SysFont("Georgia", int(15 * scale))
+    font_sub = pygame.font.SysFont("Georgia", int(15 * scale))
 
     stars = [
         (random.randint(0, WIDTH),
@@ -83,11 +84,14 @@ def main_menu():
     ]
 
     clock = pygame.time.Clock()
-    tick  = 0
+    tick = 0
 
-    # Boutons centrés et scalés
-    btn_play   = pygame.Rect(WIDTH // 2 - int(170 * scale), int(290 * scale), int(340 * scale), int(86 * scale))
-    btn_credit = pygame.Rect(WIDTH // 2 - int(94  * scale), int(400 * scale), int(188 * scale), int(58 * scale))
+    # Nouveaux placements des boutons (remontés pour faire de la place)
+    btn_play = pygame.Rect(WIDTH // 2 - int(170 * scale), int(270 * scale), int(340 * scale), int(86 * scale))
+    btn_credit = pygame.Rect(WIDTH // 2 - int(94 * scale), int(380 * scale), int(188 * scale), int(58 * scale))
+
+    # 1. Création du nouveau bouton Quitter
+    btn_quit = pygame.Rect(WIDTH // 2 - int(94 * scale), int(460 * scale), int(188 * scale), int(58 * scale))
 
     current_screen = "menu"
 
@@ -100,16 +104,26 @@ def main_menu():
                 pygame.quit()
                 sys.exit()
             if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
-                current_screen = "menu"
+                if current_screen == "credits":
+                    current_screen = "menu"
+                else:
+                    pygame.quit()
+                    sys.exit()
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 if current_screen == "menu":
                     if btn_play.collidepoint(mouse):
+                        from game import run_game  # Import ici pour éviter les bugs circulaires
                         run_game(screen, WIDTH, HEIGHT)
                     elif btn_credit.collidepoint(mouse):
                         current_screen = "credits"
+
+                    # 2. Gestion du clic sur Quitter
+                    elif btn_quit.collidepoint(mouse):
+                        pygame.quit()
+                        sys.exit()
+
                 elif current_screen == "credits":
                     from credits import back_button_rect
-                    scale = HEIGHT / 600
                     if back_button_rect(WIDTH, HEIGHT, scale).collidepoint(mouse):
                         current_screen = "menu"
 
@@ -120,20 +134,23 @@ def main_menu():
         draw_ground(screen, WIDTH, HEIGHT)
 
         if current_screen == "menu":
-            title        = font_title.render("LA MAISON VERTE", True, GREEN_LIGHT)
+            title = font_title.render("LA MAISON VERTE", True, GREEN_LIGHT)
             title_shadow = font_title.render("LA MAISON VERTE", True, (0, 30, 0))
             tx = WIDTH // 2 - title.get_width() // 2
             ty = int(160 * scale)
             screen.blit(title_shadow, (tx + 3, ty + 3))
-            screen.blit(title,        (tx,     ty))
+            screen.blit(title, (tx, ty))
 
             sub = font_sub.render(
                 "La planète a besoin de vous… commencez chez vous !",
                 True, GREEN_SUB)
-            screen.blit(sub, (WIDTH // 2 - sub.get_width() // 2, int(248 * scale)))
+            screen.blit(sub, (WIDTH // 2 - sub.get_width() // 2, int(230 * scale)))  # Sous-titre légèrement remonté
 
-            draw_button(screen, btn_play,   "▶  JOUER", font_big,   btn_play.collidepoint(mouse),   big=True)
-            draw_button(screen, btn_credit, "Crédits",  font_small, btn_credit.collidepoint(mouse))
+            draw_button(screen, btn_play, "▶  JOUER", font_big, btn_play.collidepoint(mouse), big=True)
+            draw_button(screen, btn_credit, "Crédits", font_small, btn_credit.collidepoint(mouse))
+
+            # 3. Affichage du bouton Quitter
+            draw_button(screen, btn_quit, "Quitter", font_small, btn_quit.collidepoint(mouse))
 
         elif current_screen == "credits":
             show_credits(screen, WIDTH, HEIGHT, font_big, font_small, font_sub,
@@ -141,7 +158,6 @@ def main_menu():
 
         pygame.display.flip()
         clock.tick(60)
-
 
 if __name__ == "__main__":
     pygame.init()
