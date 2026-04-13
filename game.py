@@ -212,7 +212,7 @@ def get_lamp_image(lamp: dict, lamp_images: dict) -> pygame.Surface | None:
         return None
     src = lamp_images["on"] if lamp["is_on"] else lamp_images["off"]
     # Taille affichée : diamètre * 2.2 pour que la lampe soit bien visible
-    size = int(lamp["radius"] * 4.4)
+    size = int(lamp["radius"] * 2.8)
     return pygame.transform.smoothscale(src, (size, size))
 
 
@@ -489,7 +489,7 @@ def draw_player(screen, game: dict) -> None:
 
     sprites = game.get("sprites", {"loaded": False})
     if sprites.get("loaded") and sprites["player"] is not None:
-        size = int(r * 5)
+        size = int(r * 4)
         img = pygame.transform.smoothscale(sprites["player"], (size, size))
         screen.blit(img, (x - size // 2, y - size))
     else:
