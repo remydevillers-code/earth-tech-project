@@ -284,7 +284,7 @@ def spawn_projectile(game, sounds):
 
 def _fail(game, reason):
     game.update({"state": "game_over", "projectiles": [],
-                 "feedback": f"{reason}  •  R pour réessayer"})
+                 "feedback": f"{reason}  • appuyez sur le bouton pour reccomencer"})
 
 def _win_level(game, sounds):
     play_sound(sounds, "win", game["muted"])
@@ -302,7 +302,11 @@ def go_next(game):
     if game["state"] == "level_transition":
         load_level(game, game["level_index"] + 1)
 
-def restart_level(game): load_level(game, game["level_index"])
+def restart_level(game):
+    game["score"] = 0
+    game["shots"] = 0
+    game["energy_saved_wh"] = 0.0
+    load_level(game, game["level_index"])
 
 def restart_game(game):
     game["score"] = game["shots"] = 0

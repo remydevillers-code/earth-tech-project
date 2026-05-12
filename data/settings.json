@@ -15,7 +15,7 @@
   },
   "player": {
     "x": 90,
-    "y": 420,
+    "y": 460,
     "power_min": 10,
     "power_max": 40,
     "angle_min": 15,
